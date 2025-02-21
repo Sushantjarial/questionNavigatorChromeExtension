@@ -1,22 +1,21 @@
 let questions = [];
-let isNavigatorVisible = true;
-let initializationAttempts = 0;
+let isVisible = true;
+let attempts = 0;
 const MAX_ATTEMPTS = 10;
 
-// Wait for the chat interface to be ready
 function waitForChat() {
   const chatContainer = document.querySelector('main');
   const chatHeader = document.querySelector('main > div > div');
   
   if (!chatContainer || !chatHeader) {
-    initializationAttempts++;
-    if (initializationAttempts < MAX_ATTEMPTS) {
+    attempts++;
+    if (attempts < MAX_ATTEMPTS) {
       setTimeout(waitForChat, 1000);
     }
     return;
   }
   
-  initializationAttempts = 0;
+  attempts = 0;
   initializeNavigator();
 }
 
@@ -43,8 +42,8 @@ function createNavigatorUI() {
   navigator.style.top = '100px';
   
   const toggleNavigator = () => {
-    isNavigatorVisible = !isNavigatorVisible;
-    navigator.style.transform = isNavigatorVisible ? 'translateX(0)' : 'translateX(calc(100% + 20px))';
+    isVisible = !isVisible;
+    navigator.style.transform = isVisible ? 'translateX(0)' : 'translateX(calc(100% + 20px))';
   };
 
   document.addEventListener('keydown', (e) => {
@@ -134,7 +133,7 @@ function handleUrlChange() {
     existingNavigator.remove();
   }
   
-  initializationAttempts = 0;
+  attempts = 0;
   waitForChat();
 }
 
