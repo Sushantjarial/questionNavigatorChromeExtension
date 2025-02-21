@@ -11,16 +11,12 @@ function waitForChat() {
   if (!chatContainer || !chatHeader) {
     initializationAttempts++;
     if (initializationAttempts < MAX_ATTEMPTS) {
-      // If chat container is not found, retry after a short delay
       setTimeout(waitForChat, 1000);
     }
     return;
   }
   
-  // Reset attempts counter on successful initialization
   initializationAttempts = 0;
-  
-  // Initialize everything once chat is ready
   initializeNavigator();
 }
 
@@ -28,12 +24,10 @@ function initializeNavigator() {
   const navigator = createNavigatorUI();
   updateQuestionsList();
 
-  // Observe for changes in the chat
   const observer = new MutationObserver(() => {
     updateQuestionsList();
   });
 
-  // Observe the main chat container instead of body
   const chatContainer = document.querySelector('main');
   if (chatContainer) {
     observer.observe(chatContainer, {
@@ -48,31 +42,17 @@ function createNavigatorUI() {
   navigator.className = 'question-navigator-card';
   navigator.style.top = '100px';
   
-  // Create and append toggle button to body
-  const toggleContainer = document.createElement('div');
-  toggleContainer.className = 'question-navigator-toggle-container';
-  
-  const toggle = document.createElement('button');
-  toggle.className = 'question-navigator-toggle';
-  toggle.textContent = 'BMQ';
-  
-  toggleContainer.appendChild(toggle);
-  document.body.appendChild(toggleContainer);
-
   const toggleNavigator = () => {
     isNavigatorVisible = !isNavigatorVisible;
     navigator.style.transform = isNavigatorVisible ? 'translateX(0)' : 'translateX(calc(100% + 20px))';
   };
 
-  // Add keyboard shortcut listener
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key.toLowerCase() === 'b') {
-      e.preventDefault(); // Prevent default browser behavior
+      e.preventDefault();
       toggleNavigator();
     }
   });
-
-  toggle.onclick = toggleNavigator;
 
   navigator.innerHTML = `
     <div class="question-navigator-header">
@@ -86,7 +66,6 @@ function createNavigatorUI() {
 }
 
 function updateQuestionsList() {
-  // Update selector to match ChatGPT's current structure
   const humanMessages = document.querySelectorAll('[data-message-author-role="user"]');
   const questionsList = document.getElementById('questionsList');
   
@@ -96,7 +75,7 @@ function updateQuestionsList() {
 
   humanMessages.forEach((message, index) => {
     const text = message.textContent.trim();
-    if (!text) return; // Skip empty messages
+    if (!text) return;
     
     questions.push({
       text,
@@ -106,6 +85,9 @@ function updateQuestionsList() {
     const questionDiv = document.createElement('div');
     questionDiv.className = 'question-item';
     questionDiv.textContent = text;
+    questionDiv.style.marginBottom = '10px';
+    questionDiv.style.paddingBottom = '10px';
+    questionDiv.style.borderBottom = '1px solid #ccc';
     questionDiv.onclick = () => {
       document.querySelectorAll('.question-item').forEach(q => q.classList.remove('active'));
       questionDiv.classList.add('active');
@@ -121,7 +103,6 @@ function updateQuestionsList() {
   });
 }
 
-// Initialize theme handling
 function updateTheme() {
   const isDarkMode = document.documentElement.classList.contains('dark');
   const root = document.documentElement;
@@ -139,37 +120,24 @@ function updateTheme() {
   }
 }
 
-// Watch for theme changes
 const themeObserver = new MutationObserver(updateTheme);
 themeObserver.observe(document.documentElement, {
   attributes: true,
   attributeFilter: ['class']
 });
 
-// Initial theme setup
 updateTheme();
 
-// Function to handle URL changes
 function handleUrlChange() {
-  // Reset and reinitialize when URL changes
   const existingNavigator = document.querySelector('.question-navigator-card');
-  const existingToggle = document.querySelector('.question-navigator-toggle');
-  
   if (existingNavigator) {
     existingNavigator.remove();
   }
-  if (existingToggle) {
-    existingToggle.parentElement?.remove();
-  }
   
-  // Reset attempts counter
   initializationAttempts = 0;
-  
-  // Start fresh initialization
   waitForChat();
 }
 
-// Watch for URL changes
 let lastUrl = location.href;
 new MutationObserver(() => {
   const url = location.href;
@@ -179,18 +147,13 @@ new MutationObserver(() => {
   }
 }).observe(document, { subtree: true, childList: true });
 
-// Start the initialization process
 waitForChat();
 
-// Re-run initialization when the document body changes significantly
 const bodyObserver = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     if (mutation.removedNodes.length > 0) {
-      // Check if our navigator was removed
       const navigatorExists = document.querySelector('.question-navigator-card');
-      const toggleExists = document.querySelector('.question-navigator-toggle');
-      
-      if (!navigatorExists || !toggleExists) {
+      if (!navigatorExists) {
         handleUrlChange();
         break;
       }
