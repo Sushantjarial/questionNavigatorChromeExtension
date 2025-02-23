@@ -1,6 +1,11 @@
 # Question Navigator Chrome Extension
 
-A simple Chrome extension that helps you track and navigate through your past questions asked to chat gpt .
+A simple Chrome extension that helps you track and navigate through your past questions asked to chat gpt .  With a single click on the question
+you will be scrolled up to that question in the conversation. 
+Ctrl + b to toggle the qustions's sidebar
+
+![image](https://github.com/user-attachments/assets/c49468cc-e59d-4cc0-96f1-72cdc5ab5227)
+
 
 ## 🚀 Features
 - Automatically tracks your asked questions.
